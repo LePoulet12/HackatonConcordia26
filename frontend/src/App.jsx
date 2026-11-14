@@ -10,6 +10,7 @@ import {
   Settings,
   Sun,
 } from "lucide-react";
+import Notes from "./components/Notes";
 import "./App.css";
 
 const items = [
@@ -21,7 +22,7 @@ const items = [
 ];
 
 export default function App() {
-  const [active, setActive] = useState("campus");
+  const [active, setActive] = useState("notes");
   const [theme, setTheme] = useState(() => {
     try {
       const saved = localStorage.getItem("campus-theme");
@@ -42,6 +43,7 @@ export default function App() {
     }
   }, [theme]);
   return (
+    <>
     <aside className="sidebar" aria-label="Menu Campus">
       <a className="brand" href="#campus" onClick={() => setActive("campus")}>
         <span className="brand-mark">C</span>Campus
@@ -95,5 +97,7 @@ export default function App() {
         </a>
       </div>
     </aside>
+    {active === "notes" && <Notes />}
+    </>
   );
 }
