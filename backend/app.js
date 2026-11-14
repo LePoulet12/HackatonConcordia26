@@ -1,3 +1,4 @@
+import authRoutes from "./routes/authRoutes.js";
 import express from "express";
 import { connecterDB } from "./util/database.js";
 import cors from "cors";
@@ -19,7 +20,7 @@ app.use(express.json());
 app.use("/api/publications", publicationRoutes);
 app.use("/api/commentaires", commentaireRoutes);
 app.use("/api/etablissements", etablissementRoutes);
-
+app.use("/api/auth", authRoutes);
 // Ajouter les autres routes de l’équipe AVANT la 404.
 
 app.use((req, res) => {
