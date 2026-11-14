@@ -44,7 +44,7 @@ export default function App() {
         return saved;
       }
     } catch {
-      // Stockage facultatif pour le thème.
+      // Le thème reste utilisable sans stockage.
     }
 
     return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -56,13 +56,34 @@ export default function App() {
     localStorage.removeItem(tokenKey);
     setToken(null);
     setAccount(null);
+    window.dispatchEvent(new Event("campus-auth-change"));
   }, []);
 
   function connect(nextToken) {
     localStorage.setItem(tokenKey, nextToken);
     setAccount(null);
     setToken(nextToken);
+    window.dispatchEvent(new Event("campus-auth-change"));
   }
+
+  useEffect(() => {
+    function synchroniserCompte() {
+      setAccount(null);
+      setToken(localStorage.getItem(tokenKey));
+    }
+
+    window.addEventListener(
+      "campus-auth-change",
+      synchroniserCompte
+    );
+
+    return () => {
+      window.removeEventListener(
+        "campus-auth-change",
+        synchroniserCompte
+      );
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -70,7 +91,7 @@ export default function App() {
     try {
       localStorage.setItem("campus-theme", theme);
     } catch {
-      // Stockage facultatif pour le thème.
+      // Le thème reste utilisable sans stockage.
     }
   }, [theme]);
 
@@ -79,10 +100,16 @@ export default function App() {
       setActive(window.location.hash.slice(1) || "horaire");
     }
 
-    window.addEventListener("hashchange", synchroniserNavigation);
+    window.addEventListener(
+      "hashchange",
+      synchroniserNavigation
+    );
 
     return () => {
-      window.removeEventListener("hashchange", synchroniserNavigation);
+      window.removeEventListener(
+        "hashchange",
+        synchroniserNavigation
+      );
     };
   }, []);
 
@@ -126,8 +153,12 @@ export default function App() {
             <a
               key={id}
               href={`#${id}`}
-              className={`nav-item ${active === id ? "active" : ""}`}
-              aria-current={active === id ? "page" : undefined}
+              className={`nav-item ${
+                active === id ? "active" : ""
+              }`}
+              aria-current={
+                active === id ? "page" : undefined
+              }
               onClick={() => setActive(id)}
             >
               <ItemIcon
@@ -153,16 +184,27 @@ export default function App() {
             aria-pressed={theme === "dark"}
           >
             {theme === "dark" ? (
-              <Moon size={24} strokeWidth={1.7} aria-hidden="true" />
+              <Moon
+                size={24}
+                strokeWidth={1.7}
+                aria-hidden="true"
+              />
             ) : (
-              <Sun size={24} strokeWidth={1.7} aria-hidden="true" />
+              <Sun
+                size={24}
+                strokeWidth={1.7}
+                aria-hidden="true"
+              />
             )}
 
             <span>
               {theme === "dark" ? "Mode sombre" : "Mode clair"}
             </span>
 
-            <span className="theme-switch" aria-hidden="true" />
+            <span
+              className="theme-switch"
+              aria-hidden="true"
+            />
           </button>
 
           <a
@@ -195,7 +237,9 @@ export default function App() {
               </span>
 
               <span>
-                <strong>{account?.pseudo || "Mon compte"}</strong>
+                <strong>
+                  {account?.pseudo || "Mon compte"}
+                </strong>
                 <small>Se déconnecter</small>
               </span>
             </button>
@@ -224,7 +268,9 @@ export default function App() {
         />
       )}
 
-      {active === "notes" && <Notes />}
+      {active === "notes" && (
+        <Notes key={token || "guest"} />
+      )}
     </>
   );
 }
