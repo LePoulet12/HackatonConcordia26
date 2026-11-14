@@ -58,3 +58,9 @@
 .theme-switch { margin-left: auto; width: 32px; height: 20px; padding: 3px; border-radius: 20px; background: var(--switch); flex-shrink: 0; }
 .theme-switch::before { content: ''; display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); }
 [data-theme="dark"] .theme-switch::before { transform: translateX(12px); background: var(--text); }
+
+@media (max-width: 800px) {
+  .sidebar { position: static; width: 100%; border-right: 0; border-bottom: 1px solid var(--border); }
+  .sidebar nav { flex-direction: row; flex-wrap: wrap; margin-top: 20px; }
+  .sidebar-footer { padding-top: 16px; }
+}
