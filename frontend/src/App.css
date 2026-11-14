@@ -1,4 +1,4 @@
-﻿.sidebar {
+.sidebar {
   position: fixed;
   inset: 0 auto 0 0;
   width: 255px;
@@ -6,8 +6,8 @@
   display: flex;
   flex-direction: column;
   padding: 24px 12px;
-  border-right: 1px solid #e1e3ef;
-  background: #fff;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
   overflow-y: auto;
 }
 .brand {
@@ -24,9 +24,9 @@
   place-items: center;
   width: 43px;
   height: 43px;
-  border: 2.5px solid #5944dd;
+  border: 2.5px solid var(--brand);
   border-radius: 12px;
-  color: #5944dd;
+  color: var(--brand);
   font-size: 31px;
 }
 .sidebar nav {
@@ -45,10 +45,16 @@
   min-height: 51px;
 }
 .nav-item svg { flex-shrink: 0; }
-.nav-item:hover { background: #f6f4ff; }
-.nav-item.active { background: #ece8ff; color: #5038d7; font-weight: 650; }
+.nav-item:hover { background: var(--hover); }
+.nav-item.active { background: var(--active); color: var(--accent); font-weight: 650; }
 .sidebar-footer { margin-top: auto; padding-top: 35px; }
-.sidebar-footer > .nav-item { border-top: 1px solid #e1e3ef; border-radius: 0; padding-top: 24px; }
+.sidebar-footer > a.nav-item { border-top: 1px solid var(--border); border-radius: 0; padding-top: 24px; }
 .profile { display: flex; align-items: center; gap: 15px; padding: 22px 12px 6px; font-size: 17px; }
 .profile > svg { margin-left: auto; width: 18px; }
 .avatar { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 50%; background: linear-gradient(135deg,#7965ed,#4d35d4); color: white; font-size: 23px; }
+
+.theme-toggle { width: 100%; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; gap: 12px; margin-bottom: 12px; text-align: left; }
+.theme-toggle:focus-visible { outline: 3px solid #a99cf4; outline-offset: 3px; }
+.theme-switch { margin-left: auto; width: 32px; height: 20px; padding: 3px; border-radius: 20px; background: var(--switch); flex-shrink: 0; }
+.theme-switch::before { content: ''; display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); }
+[data-theme="dark"] .theme-switch::before { transform: translateX(12px); background: var(--text); }
