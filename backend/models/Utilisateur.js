@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
+import { entreeHoraireSchema } from "./EntreeHoraire.js";
+
 const utilisateurSchema = new mongoose.Schema(
     {
+        horaire: { type: [entreeHoraireSchema], default: [], select: false },
         pseudo: {
             type: String,
             required: true,
