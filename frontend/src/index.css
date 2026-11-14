@@ -1,2 +1,49 @@
-﻿:root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#17132f;background:#f6f7fc;font-synthesis:none;-webkit-font-smoothing:antialiased}
-*{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}a:focus-visible{outline:3px solid #a99cf4;outline-offset:3px}#root{min-height:100vh}
+:root {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: var(--background);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+a:focus-visible {
+  outline: 3px solid #a99cf4;
+  outline-offset: 3px;
+}
+#root {
+  min-height: 100vh;
+}
+
+:root {
+  color-scheme: light;
+  --text: #17132f;
+  --background: #f6f7fc;
+  --surface: #fff;
+  --border: #e1e3ef;
+  --hover: #f6f4ff;
+  --active: #ece8ff;
+  --accent: #5038d7;
+  --brand: #5944dd;
+  --switch: #dcdfea;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --text: #f1f4fa;
+  --background: #0e1623;
+  --surface: #172231;
+  --border: #344458;
+  --hover: #223247;
+  --active: #284e81;
+  --accent: #d9e9ff;
+  --brand: #aa9bff;
+  --switch: #4e6380;
+}
