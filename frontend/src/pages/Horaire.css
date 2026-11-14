@@ -1,61 +1,83 @@
-.horaire-workspace { margin-left:255px; min-height:100vh; background:#f6f7fc; }
-.horaire-workspace button,.horaire-workspace input,.horaire-workspace select { font:inherit; color:inherit; }
+.horaire-workspace {
+  --horaire-muted:#55536e;
+  --horaire-trip-bg:#d7f2ec;
+  --horaire-trip-text:#145952;
+  --horaire-trip-marker:#19998d;
+  --horaire-route-bg:#f7fbfa;
+  --horaire-route-border:#d8ece8;
+  --horaire-error:#a13535;
+}
+
+[data-theme="dark"] .horaire-workspace {
+  --horaire-muted:#a4b0c3;
+  --horaire-trip-bg:#193e3d;
+  --horaire-trip-text:#a9eddf;
+  --horaire-trip-marker:#74d9c5;
+  --horaire-route-bg:var(--background);
+  --horaire-route-border:var(--border);
+  --horaire-error:#ffb4ab;
+}
+
+.horaire-workspace { margin-left:255px; min-height:100vh; background:var(--background); color:var(--text); }
+.horaire-workspace :where(button,input,select) { font:inherit; color:inherit; }
 .horaire-workspace button { cursor:pointer; }
 .horaire-workspace svg { flex-shrink:0; }
 .horaire-topbar { height:78px; display:flex; align-items:center; gap:20px; padding:14px 28px; }
-.horaire-search { display:flex; align-items:center; gap:16px; border:1px solid #d0d3e6; border-radius:24px; padding:0 17px; flex:1; margin-right:30px; color:#65647d; }
+.horaire-search { display:flex; align-items:center; gap:16px; border:1px solid var(--border); border-radius:24px; padding:0 17px; flex:1; margin-right:30px; color:var(--horaire-muted); }
 .horaire-search input { width:100%; min-width:0; border:0; background:transparent; padding:12px 0; outline-offset:3px; }
 .horaire-icon { display:inline-flex; align-items:center; justify-content:center; width:43px; height:43px; background:transparent; border:0; border-radius:12px; flex-shrink:0; }
-.horaire-icon:hover { background:#ece8ff; }
+.horaire-icon:hover { background:var(--hover); }
 .notification { position:relative; }
-.notification i { width:9px; height:9px; border-radius:50%; background:#5541d2; position:absolute; right:7px; top:4px; }
-.header-divider { height:38px; border-left:1px solid #cdd0e2; }
-.moon-decoration { width:42px; height:42px; display:grid; place-items:center; border:1px solid #d0d3e6; border-radius:50%; background:#ffffffa0; }
+.notification i { width:9px; height:9px; border-radius:50%; background:var(--brand); position:absolute; right:7px; top:4px; }
+.header-divider { height:38px; border-left:1px solid var(--border); }
+.moon-decoration { width:42px; height:42px; display:grid; place-items:center; border:1px solid var(--border); border-radius:50%; background:var(--surface); }
 .horaire-page { padding:20px 25px 28px; max-width:1600px; margin:auto; }
 .horaire-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:30px; }
 .horaire-heading h1 { font-size:40px; letter-spacing:-1.3px; line-height:1.15; margin:0; }
-.horaire-heading p { margin:0; font-size:19px; color:#55536e; }
+.horaire-heading p { margin:0; font-size:19px; color:var(--horaire-muted); }
 .horaire-actions { display:flex; gap:14px; }
-.horaire-button { display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 19px; border-radius:11px; border:1px solid #624bdd; background:white; white-space:nowrap; font-weight:600!important; }
-.horaire-button.outline { color:#5940d7; }
-.horaire-button.primary { background:linear-gradient(120deg,#745cda,#6250ca); color:white; border-color:transparent; }
+.horaire-button { display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:12px 19px; border-radius:11px; border:1px solid var(--brand); background:var(--surface); white-space:nowrap; font-weight:600!important; }
+.horaire-button.outline { color:var(--brand); }
+.horaire-button.outline:hover { background:var(--hover); }
+.horaire-button.primary:not(:disabled):hover { background:#4630c4; }
+.horaire-button.primary { background:#543bdf; color:white; border-color:transparent; }
 .horaire-layout { display:grid; grid-template-columns:minmax(0,1fr) 350px; gap:20px; align-items:start; }
 .horaire-controls { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 0 25px; }
 .week-navigation { display:flex; align-items:center; gap:12px; }
-.bordered { border:1px solid #dcdfee; background:#ffffffc0; }
-.week-label { display:flex; align-items:center; gap:13px; padding:11px 16px; border:1px solid #dcdfee; border-radius:12px; background:#ffffffc0; font-weight:550; white-space:nowrap; }
-.horaire-view { display:flex; border:1px solid #d4d7eb; border-radius:11px; overflow:hidden; background:#ffffff80; }
+.bordered { border:1px solid var(--border); background:var(--surface); }
+.week-label { display:flex; align-items:center; gap:13px; padding:11px 16px; border:1px solid var(--border); border-radius:12px; background:var(--surface); font-weight:550; white-space:nowrap; }
+.horaire-view { display:flex; border:1px solid var(--border); border-radius:11px; overflow:hidden; background:var(--surface); }
 .horaire-view button { padding:11px 24px; border:0; background:none; }
-.horaire-view .selected { background:linear-gradient(120deg,#745cda,#6250ca); border-radius:10px; color:white; }
-.horaire-calendar-scroll { border:1px solid #dfe2ef; border-radius:16px; overflow-x:auto; background:#ffffffc9; }
+.horaire-view .selected { background:var(--active); border-radius:10px; color:var(--accent); }
+.horaire-calendar-scroll { border:1px solid var(--border); border-radius:16px; overflow-x:auto; background:var(--surface); }
 .horaire-calendar { display:grid; grid-template-columns:65px repeat(var(--days),minmax(125px,1fr)); grid-template-rows:64px 610px; min-width:700px; }
 .horaire-calendar.single-day { min-width:0; }
-.horaire-day { display:grid; place-items:center; border-left:1px solid #d9ddec; border-bottom:1px solid #d9ddec; font-size:18px; font-weight:700; }
-.horaire-times { position:relative; font-size:14px; }
+.horaire-day { display:grid; place-items:center; border-left:1px solid var(--border); border-bottom:1px solid var(--border); font-size:18px; font-weight:700; }
+.horaire-times { position:relative; font-size:14px; color:var(--horaire-muted); }
 .horaire-times span { position:absolute; right:17px; transform:translateY(0); }
-.horaire-day-column { position:relative; border-left:1px solid #d9ddec; background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(100% / 9.5 - 1px),#d9ddec calc(100% / 9.5 - 1px),#d9ddec calc(100% / 9.5)); }
-.horaire-event { position:absolute; left:5px; right:4px; padding:10px 12px; background:linear-gradient(120deg,#e3dcfc,#ded8f8); border-radius:10px; display:flex; flex-direction:column; line-height:1.15; overflow:hidden; }
+.horaire-day-column { position:relative; border-left:1px solid var(--border); background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(100% / 9.5 - 1px),var(--border) calc(100% / 9.5 - 1px),var(--border) calc(100% / 9.5)); }
+.horaire-event { position:absolute; left:5px; right:4px; padding:10px 12px; background:var(--active); color:var(--accent); border-radius:10px; display:flex; flex-direction:column; line-height:1.15; overflow:hidden; }
 .horaire-event.strong { color:white; background:linear-gradient(120deg,#7456d7,#5c46c7); }
 .horaire-event strong { font-size:15px; margin-bottom:6px; }
 .horaire-event span { font-size:13px; display:flex; align-items:center; gap:6px; margin-top:3px; }
 .horaire-details { display:flex; flex-direction:column; gap:16px; }
-.horaire-card { padding:20px; border:1px solid #dfe2ef; border-radius:17px; background:#ffffffd9; }
+.horaire-card { padding:20px; border:1px solid var(--border); border-radius:17px; background:var(--surface); }
 .horaire-card h2 { display:flex; align-items:center; gap:13px; font-size:21px; letter-spacing:-.5px; margin:0 0 18px; }
-.horaire-card h2>svg:last-child:not(:first-child) { margin-left:auto; color:#77778d; }
-.horaire-stops { margin:0 0 0 24px; padding:0; list-style:none; border-left:3px solid #19998d; }
+.horaire-card h2>svg:last-child:not(:first-child) { margin-left:auto; color:var(--horaire-muted); }
+.horaire-stops { margin:0 0 0 24px; padding:0; list-style:none; border-left:3px solid var(--horaire-trip-marker); }
 .horaire-stops li { position:relative; padding:0 0 24px 23px; font-size:14px; }
 .horaire-stops li:last-child { padding-bottom:0; }
-.horaire-stops li::before { content:''; position:absolute; left:-10px; top:0; width:12px; height:12px; border:2px solid #19998d; border-radius:50%; background:white; }
-.horaire-stops li:last-child::before { background:#19998d; box-shadow:inset 0 0 0 2px white; }
-.horaire-course-list label { display:flex; align-items:center; gap:15px; border-top:1px solid #ececf5; padding:10px 0; font-size:15px; cursor:pointer; }
-.horaire-course-list input { width:19px; height:19px; accent-color:#6650ce; margin:0; }
-.course-swatch { width:27px; height:21px; border-radius:5px; background:#e1dafb; flex-shrink:0; }
+.horaire-stops li::before { content:''; position:absolute; left:-10px; top:0; width:12px; height:12px; border:2px solid var(--horaire-trip-marker); border-radius:50%; background:var(--surface); }
+.horaire-stops li:last-child::before { background:var(--horaire-trip-marker); box-shadow:inset 0 0 0 2px var(--surface); }
+.horaire-course-list label { display:flex; align-items:center; gap:15px; border-top:1px solid var(--border); padding:10px 0; font-size:15px; cursor:pointer; }
+.horaire-course-list input { width:19px; height:19px; accent-color:var(--brand); margin:0; }
+.course-swatch { width:27px; height:21px; border-radius:5px; background:var(--active); flex-shrink:0; }
 .course-swatch.strong { background:linear-gradient(120deg,#765bd8,#5238cf); }
-.horaire-card select,.horaire-day-select { padding:11px 13px; border:1px solid #cdd0e3; border-radius:10px; width:100%; background:white; }
+.horaire-card select,.horaire-day-select { padding:11px 13px; border:1px solid var(--border); border-radius:10px; width:100%; background:var(--surface); }
 .horaire-day-select { margin-bottom:15px; }
-.horaire-notice { display:flex; justify-content:space-between; gap:15px; padding:12px 16px; background:#ece8ff; border-radius:10px; margin-bottom:18px; font-size:14px; }
+.horaire-notice { display:flex; justify-content:space-between; gap:15px; padding:12px 16px; background:var(--active); color:var(--accent); border-radius:10px; margin-bottom:18px; font-size:14px; }
 .horaire-notice button { border:0; background:none; font-size:20px; }
-.horaire-workspace :is(button,input,select):focus-visible { outline:3px solid #a99cf4; outline-offset:3px; }
+.horaire-workspace :is(button,input,select):focus-visible { outline:3px solid var(--brand); outline-offset:3px; }
 @media(max-width:1250px) {
   .horaire-layout { grid-template-columns:minmax(0,1fr) 300px; }
   .horaire-heading { flex-wrap:wrap; }
@@ -96,24 +118,25 @@
 
 .transport-form { display:grid; gap:12px; }
 .transport-form label { display:grid; gap:5px; font-size:14px; font-weight:600; min-width:0; }
-.transport-form input { padding:10px 12px; border:1px solid #cdd0e3; border-radius:10px; background:white; width:100%; min-width:0; font-weight:400; }
+.transport-form input { padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--surface); width:100%; min-width:0; font-weight:400; }
+.transport-form input::placeholder { color:var(--horaire-muted); opacity:1; }
 .transport-form button:disabled { opacity:.65; cursor:wait; }
-.transport-result { margin-top:16px; background:#f7fbfa; border:1px solid #d8ece8; border-radius:12px; padding:12px; }
-.transport-summary { display:grid; gap:4px; font-size:14px; margin-bottom:18px; color:#115d56; }
+.transport-result { margin-top:16px; background:var(--horaire-route-bg); border:1px solid var(--horaire-route-border); border-radius:12px; padding:12px; }
+.transport-summary { display:grid; gap:4px; font-size:14px; margin-bottom:18px; color:var(--horaire-trip-text); }
 .horaire-stops.transport-steps { margin-left:7px; }
-.transport-attribution { display:block; margin-top:14px; font:400 12px Roboto, sans-serif; color:#5e5e5e; }
-.transport-error { color:#a13535; font-size:14px; }
+.transport-attribution { display:block; margin-top:14px; font:400 12px Roboto, sans-serif; color:var(--horaire-muted); }
+.transport-error { color:var(--horaire-error); font-size:14px; }
 
 .horaire-course-form { margin-bottom:16px; }
 .horaire-calendar:not(.single-day) { min-width:940px; }
-.horaire-calendar .horaire-day-column { background-size:100% calc(100% / var(--hours)); background-image:linear-gradient(to bottom,transparent calc(100% - 1px),#d9ddec calc(100% - 1px)); }
+.horaire-calendar .horaire-day-column { background-size:100% calc(100% / var(--hours)); background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--border) calc(100% - 1px)); }
 .horaire-calendar .horaire-event { border:0; text-align:left; padding:4px 6px; min-height:0; }
-.horaire-calendar .horaire-event.trajet { background:#d7f2ec; color:#145952; }
+.horaire-calendar .horaire-event.trajet { background:var(--horaire-trip-bg); color:var(--horaire-trip-text); }
 .transport-save { margin-top:14px; width:100%; }
-.session-profile { border:0; border-top:1px solid #ececf5; background:transparent; color:inherit; font:inherit; text-align:left; width:100%; cursor:pointer; }
-.session-profile small { display:block; color:#605d78; }
+.session-profile { border:0; border-top:1px solid var(--border); background:transparent; color:inherit; font:inherit; text-align:left; width:100%; cursor:pointer; }
+.session-profile small { display:block; color:var(--text); }
 @media(max-width:760px) { .session-profile span:not(.avatar) { display:none; } }
 
 .horaire-import { position:relative; cursor:pointer; }
-.horaire-import:focus-within { outline:3px solid #a99cf4; outline-offset:3px; }
+.horaire-import:focus-within { outline:3px solid var(--brand); outline-offset:3px; }
 .horaire-import input { position:absolute; inset:0; opacity:0; width:100%; cursor:inherit; }
