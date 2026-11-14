@@ -12,6 +12,7 @@ import {
 
 import Notes from "./components/Notes";
 import Horaire from "./pages/Horaire";
+import Forum from "./pages/Forum";
 import { api } from "./pages/horaireApi";
 import "./App.css";
 
@@ -68,8 +69,13 @@ export default function App() {
 
   useEffect(() => {
     function synchroniserCompte() {
-      setAccount(null);
-      setToken(localStorage.getItem(tokenKey));
+      const nextToken = localStorage.getItem(tokenKey);
+
+      setToken(nextToken);
+
+      if (!nextToken) {
+        setAccount(null);
+      }
     }
 
     window.addEventListener(
@@ -265,6 +271,13 @@ export default function App() {
           token={token}
           onConnect={connect}
           onDisconnect={disconnect}
+        />
+      )}
+
+      {active === "forum" && (
+        <Forum
+          key={token || "guest"}
+          token={token}
         />
       )}
 
