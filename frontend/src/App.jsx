@@ -1,122 +1,26 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+﻿import { useState } from 'react'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+const items = [
+  ['campus', 'Mon campus', 'm3 10 9-7 9 7v11h-6v-7H9v7H3Z'],
+  ['horaire', 'Horaire et bus', 'M4 17V5q0-2 2-2h12q2 0 2 2v12ZM4 8h16M7 13h1m8 0h1M6 17v4m12-4v4'],
+  ['forum', 'Forum', 'M21 11a9 9 0 0 1-13 8l-6 3 2-6a9 9 0 1 1 17-5Z'],
+  ['notes', 'Notes partagées', 'M14 2H5v20h14V7Zm0 0v6h5M8 12h8m-8 4h8'],
+  ['cours', 'Mes cours', 'M12 5Q7 1 2 4v16q5-3 10 0 5-3 10 0V4q-5-3-10 1Zm0 0v15'],
+]
+function Icon({ path }) {
+  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg>
 }
-
-export default App
+export default function App() {
+  const [active, setActive] = useState('campus')
+  return <aside className="sidebar" aria-label="Menu Campus">
+    <a className="brand" href="#campus" onClick={() => setActive('campus')}><span className="brand-mark">C</span>Campus</a>
+    <nav aria-label="Navigation principale">
+      {items.map(([id, label, path]) => <a key={id} href={`#${id}`} className={`nav-item ${active === id ? 'active' : ''}`} aria-current={active === id ? 'page' : undefined} onClick={() => setActive(id)}><Icon path={path} /><span>{label}</span></a>)}
+    </nav>
+    <div className="sidebar-footer">
+      <a href="#parametres" className={`nav-item ${active === 'parametres' ? 'active' : ''}`} onClick={() => setActive('parametres')}><Icon path="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-3-5 1-2h4l1 2 3 1 2 3-1 3 2 2-1 4-3 1-1 3-4 1-2-2-3-1-1-3-3-1V9l2-2V4Z" /><span>Paramètres</span></a>
+      <a className="profile" href="#profil" onClick={() => setActive('profil')}><span className="avatar">E</span><strong>Edson</strong><Icon path="m6 9 6 6 6-6" /></a>
+    </div>
+  </aside>
+}
