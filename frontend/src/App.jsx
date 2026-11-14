@@ -1,16 +1,9 @@
-import { useEffect, useState } from "react";
-import {
-  BookOpen,
-  Bus,
-  ChevronDown,
-  FileText,
-  House,
-  MessageCircle,
-  Moon,
-  Settings,
-  Sun,
-} from "lucide-react";
-import "./App.css";
+import { useCallback, useEffect, useState } from 'react'
+import './App.css'
+import Horaire from './pages/Horaire'
+import { api } from './pages/horaireApi'
+
+const tokenKey = 'campus-token'
 
 const items = [
   ["campus", "Mon campus", House],
@@ -21,79 +14,48 @@ const items = [
 ];
 
 export default function App() {
-  const [active, setActive] = useState("campus");
-  const [theme, setTheme] = useState(() => {
-    try {
-      const saved = localStorage.getItem("campus-theme");
-      if (saved === "light" || saved === "dark") return saved;
-    } catch {
-      /* Stockage facultatif. */
-    }
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  });
+  const [active, setActive] = useState(() => window.location.hash.slice(1) || 'horaire')
+  const [token, setToken] = useState(() => localStorage.getItem(tokenKey))
+  const [account, setAccount] = useState(null)
+  const disconnect = useCallback(() => {
+    localStorage.removeItem(tokenKey)
+    setToken(null)
+    setAccount(null)
+  }, [])
+
+  function connect(nextToken) {
+    localStorage.setItem(tokenKey, nextToken)
+    setToken(nextToken)
+  }
+
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    try {
-      localStorage.setItem("campus-theme", theme);
-    } catch {
-      /* Stockage facultatif. */
-    }
-  }, [theme]);
-  return (
-    <aside className="sidebar" aria-label="Menu Campus">
-      <a className="brand" href="#campus" onClick={() => setActive("campus")}>
-        <span className="brand-mark">C</span>Campus
-      </a>
-      <nav aria-label="Navigation principale">
-        {items.map(([id, label, ItemIcon]) => (
-          <a
-            key={id}
-            href={`#${id}`}
-            className={`nav-item ${active === id ? "active" : ""}`}
-            aria-current={active === id ? "page" : undefined}
-            onClick={() => setActive(id)}
-          >
-            <ItemIcon size={24} strokeWidth={1.7} aria-hidden="true" />
-            <span>{label}</span>
-          </a>
-        ))}
-      </nav>
-      <div className="sidebar-footer">
-        <button
-          className="theme-toggle nav-item"
-          type="button"
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          aria-label="Mode sombre"
-          aria-pressed={theme === "dark"}
-        >
-          {theme === "dark" ? (
-            <Moon size={24} strokeWidth={1.7} aria-hidden="true" />
-          ) : (
-            <Sun size={24} strokeWidth={1.7} aria-hidden="true" />
-          )}
-          <span>{theme === "dark" ? "Mode sombre" : "Mode clair"}</span>
-          <span className="theme-switch" aria-hidden="true" />
+    if (!token) return
+    const controller = new AbortController()
+    api('/api/auth/moi', { token, signal: controller.signal }).then((user) => {
+      if (!controller.signal.aborted) setAccount(user)
+    }).catch((error) => {
+      if (!controller.signal.aborted && error.status === 401) disconnect()
+    })
+    return () => controller.abort()
+  }, [token, disconnect])
+
+  return <><aside className="sidebar" aria-label="Menu Campus">
+    <a className="brand" href="#campus" onClick={() => setActive('campus')}><span className="brand-mark">C</span>Campus</a>
+    <nav aria-label="Navigation principale">
+      {items.map(([id, label, path]) => <a key={id} href={`#${id}`} className={`nav-item ${active === id ? 'active' : ''}`} aria-current={active === id ? 'page' : undefined} onClick={() => setActive(id)}><Icon path={path} /><span>{label}</span></a>)}
+    </nav>
+    <div className="sidebar-footer">
+      <a href="#parametres" className={`nav-item ${active === 'parametres' ? 'active' : ''}`} onClick={() => setActive('parametres')}><Icon path="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-3-5 1-2h4l1 2 3 1 2 3-1 3 2 2-1 4-3 1-1 3-4 1-2-2-3-1-1-3-3-1V9l2-2V4Z" /><span>Paramètres</span></a>
+      {token ? (
+        <button className="profile session-profile" onClick={disconnect} type="button" aria-label="Se déconnecter">
+          <span className="avatar">{account?.pseudo[0]?.toUpperCase() || "C"}</span>
+          <span><strong>{account?.pseudo || "Mon compte"}</strong><small>Se déconnecter</small></span>
         </button>
-        <a
-          href="#parametres"
-          className={`nav-item ${active === "parametres" ? "active" : ""}`}
-          onClick={() => setActive("parametres")}
-        >
-          <Settings size={24} strokeWidth={1.7} aria-hidden="true" />
-          <span>Paramètres</span>
+      ) : (
+        <a className="profile" href="#horaire" aria-label="Se connecter" onClick={() => setActive("horaire")}>
+          <span className="avatar" aria-hidden="true">↪</span><strong>Se connecter</strong>
         </a>
-        <a
-          className="profile"
-          href="#profil"
-          onClick={() => setActive("profil")}
-        >
-          <span className="avatar">E</span>
-          <strong>Edson</strong>
-          <ChevronDown size={24} strokeWidth={1.7} aria-hidden="true" />
-        </a>
-      </div>
-    </aside>
-  );
+      )}
+    </div>
+  </aside>{active === 'horaire' && <Horaire key={token || "guest"} token={token} onConnect={connect} onDisconnect={disconnect} />}</>
 }
