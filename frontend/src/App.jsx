@@ -6,15 +6,13 @@ import { api } from './pages/horaireApi'
 const tokenKey = 'campus-token'
 
 const items = [
-  ['campus', 'Mon campus', 'm3 10 9-7 9 7v11h-6v-7H9v7H3Z'],
-  ['horaire', 'Horaire et bus', 'M4 17V5q0-2 2-2h12q2 0 2 2v12ZM4 8h16M7 13h1m8 0h1M6 17v4m12-4v4'],
-  ['forum', 'Forum', 'M21 11a9 9 0 0 1-13 8l-6 3 2-6a9 9 0 1 1 17-5Z'],
-  ['notes', 'Notes partagées', 'M14 2H5v20h14V7Zm0 0v6h5M8 12h8m-8 4h8'],
-  ['cours', 'Mes cours', 'M12 5Q7 1 2 4v16q5-3 10 0 5-3 10 0V4q-5-3-10 1Zm0 0v15'],
-]
-function Icon({ path }) {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path} /></svg>
-}
+  ["campus", "Mon campus", House],
+  ["horaire", "Horaire et bus", Bus],
+  ["forum", "Forum", MessageCircle],
+  ["notes", "Notes partagées", FileText],
+  ["cours", "Mes cours", BookOpen],
+];
+
 export default function App() {
   const [active, setActive] = useState(() => window.location.hash.slice(1) || 'horaire')
   const [token, setToken] = useState(() => localStorage.getItem(tokenKey))
