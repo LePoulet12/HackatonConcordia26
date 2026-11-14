@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  BookOpen,
   Bus,
   FileText,
-  House,
   MessageCircle,
   Moon,
   Settings,
@@ -19,17 +17,127 @@ import "./App.css";
 const tokenKey = "campus-token";
 
 const items = [
-  ["campus", "Mon campus", House],
   ["horaire", "Horaire et bus", Bus],
+  ["notes", "Notes de cours", FileText],
   ["forum", "Forum", MessageCircle],
-  ["notes", "Notes partagées", FileText],
-  ["cours", "Mes cours", BookOpen],
 ];
 
-export default function App() {
-  const [active, setActive] = useState(
-    () => window.location.hash.slice(1) || "horaire"
+function pageActuelle() {
+  const page = window.location.hash.slice(1);
+
+  return ["horaire", "notes", "forum", "parametres"].includes(page)
+    ? page
+    : "horaire";
+}
+
+function Parametres({ token, account, onSave }) {
+  const [nom, setNom] = useState(account.pseudo || "");
+  const [message, setMessage] = useState("");
+  const [erreur, setErreur] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function enregistrer(event) {
+    event.preventDefault();
+    setSaving(true);
+    setErreur("");
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/auth/moi", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ pseudo: nom.trim() }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Modification impossible.");
+      }
+
+      onSave(data);
+      setNom(data.pseudo);
+      setMessage("Ton nom a été mis à jour.");
+    } catch (error) {
+      setErreur(error.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <form
+      onSubmit={enregistrer}
+      style={{
+        maxWidth: 480,
+        display: "grid",
+        gap: 18,
+        padding: 24,
+        border: "1px solid #94a3b855",
+        borderRadius: 16,
+      }}
+    >
+      <h2 style={{ margin: 0 }}>Mon profil</h2>
+
+      <label htmlFor="nom-compte">Ton nom</label>
+
+      <input
+        id="nom-compte"
+        value={nom}
+        onChange={(event) => {
+          setNom(event.target.value);
+          setMessage("");
+        }}
+        required
+        minLength={2}
+        maxLength={40}
+        autoComplete="nickname"
+        style={{
+          padding: 12,
+          borderRadius: 9,
+          border: "1px solid #94a3b8",
+          background: "transparent",
+          color: "inherit",
+          font: "inherit",
+        }}
+      />
+
+      {erreur && (
+        <p role="alert" style={{ color: "#d75b68", margin: 0 }}>
+          {erreur}
+        </p>
+      )}
+
+      {message && (
+        <p role="status" style={{ color: "#299d92", margin: 0 }}>
+          {message}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={saving || nom.trim().length < 2}
+        style={{
+          padding: "12px 18px",
+          border: 0,
+          borderRadius: 9,
+          background: "#635bce",
+          color: "white",
+          cursor: saving ? "wait" : "pointer",
+          font: "inherit",
+        }}
+      >
+        {saving ? "Enregistrement…" : "Enregistrer"}
+      </button>
+    </form>
   );
+}
+
+export default function App() {
+  const [active, setActive] = useState(pageActuelle);
 
   const [token, setToken] = useState(
     () => localStorage.getItem(tokenKey)
@@ -41,11 +149,9 @@ export default function App() {
     try {
       const saved = localStorage.getItem("campus-theme");
 
-      if (saved === "light" || saved === "dark") {
-        return saved;
-      }
+      if (saved === "light" || saved === "dark") return saved;
     } catch {
-      // Le thème reste utilisable sans stockage.
+      // Le thème fonctionne sans stockage.
     }
 
     return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -68,20 +174,18 @@ export default function App() {
   }
 
   useEffect(() => {
+    document.title = "Campus Go";
+  }, []);
+
+  useEffect(() => {
     function synchroniserCompte() {
       const nextToken = localStorage.getItem(tokenKey);
-
       setToken(nextToken);
 
-      if (!nextToken) {
-        setAccount(null);
-      }
+      if (!nextToken) setAccount(null);
     }
 
-    window.addEventListener(
-      "campus-auth-change",
-      synchroniserCompte
-    );
+    window.addEventListener("campus-auth-change", synchroniserCompte);
 
     return () => {
       window.removeEventListener(
@@ -97,19 +201,16 @@ export default function App() {
     try {
       localStorage.setItem("campus-theme", theme);
     } catch {
-      // Le thème reste utilisable sans stockage.
+      // Le thème fonctionne sans stockage.
     }
   }, [theme]);
 
   useEffect(() => {
     function synchroniserNavigation() {
-      setActive(window.location.hash.slice(1) || "horaire");
+      setActive(pageActuelle());
     }
 
-    window.addEventListener(
-      "hashchange",
-      synchroniserNavigation
-    );
+    window.addEventListener("hashchange", synchroniserNavigation);
 
     return () => {
       window.removeEventListener(
@@ -129,9 +230,7 @@ export default function App() {
       signal: controller.signal,
     })
       .then((user) => {
-        if (!controller.signal.aborted) {
-          setAccount(user);
-        }
+        if (!controller.signal.aborted) setAccount(user);
       })
       .catch((error) => {
         if (!controller.signal.aborted && error.status === 401) {
@@ -144,14 +243,14 @@ export default function App() {
 
   return (
     <>
-      <aside className="sidebar" aria-label="Menu Campus">
+      <aside className="sidebar" aria-label="Menu Campus Go">
         <a
           className="brand"
-          href="#campus"
-          onClick={() => setActive("campus")}
+          href="#horaire"
+          onClick={() => setActive("horaire")}
+          style={{ gap: 0 }}
         >
-          <span className="brand-mark">C</span>
-          Campus
+          Campus Go
         </a>
 
         <nav aria-label="Navigation principale">
@@ -159,12 +258,8 @@ export default function App() {
             <a
               key={id}
               href={`#${id}`}
-              className={`nav-item ${
-                active === id ? "active" : ""
-              }`}
-              aria-current={
-                active === id ? "page" : undefined
-              }
+              className={`nav-item ${active === id ? "active" : ""}`}
+              aria-current={active === id ? "page" : undefined}
               onClick={() => setActive(id)}
             >
               <ItemIcon
@@ -190,27 +285,16 @@ export default function App() {
             aria-pressed={theme === "dark"}
           >
             {theme === "dark" ? (
-              <Moon
-                size={24}
-                strokeWidth={1.7}
-                aria-hidden="true"
-              />
+              <Moon size={24} strokeWidth={1.7} aria-hidden="true" />
             ) : (
-              <Sun
-                size={24}
-                strokeWidth={1.7}
-                aria-hidden="true"
-              />
+              <Sun size={24} strokeWidth={1.7} aria-hidden="true" />
             )}
 
             <span>
               {theme === "dark" ? "Mode sombre" : "Mode clair"}
             </span>
 
-            <span
-              className="theme-switch"
-              aria-hidden="true"
-            />
+            <span className="theme-switch" aria-hidden="true" />
           </button>
 
           <a
@@ -243,9 +327,7 @@ export default function App() {
               </span>
 
               <span>
-                <strong>
-                  {account?.pseudo || "Mon compte"}
-                </strong>
+                <strong>{account?.pseudo || "Mon compte"}</strong>
                 <small>Se déconnecter</small>
               </span>
             </button>
@@ -256,9 +338,7 @@ export default function App() {
               onClick={() => setActive("horaire")}
               aria-label="Se connecter"
             >
-              <span className="avatar" aria-hidden="true">
-                ↪
-              </span>
+              <span className="avatar" aria-hidden="true">↪</span>
               <strong>Se connecter</strong>
             </a>
           )}
@@ -275,14 +355,37 @@ export default function App() {
       )}
 
       {active === "forum" && (
-        <Forum
-          key={token || "guest"}
-          token={token}
-        />
+        <Forum key={token || "guest"} token={token} />
       )}
 
       {active === "notes" && (
         <Notes key={token || "guest"} />
+      )}
+
+      {active === "parametres" && (
+        <main className="forum-page">
+          <header className="forum-heading">
+            <div>
+              <h1>Paramètres</h1>
+              <p>Personnalise le nom affiché sur ton compte.</p>
+            </div>
+          </header>
+
+          {!token ? (
+            <p>
+              <a href="#horaire">Connecte-toi</a> pour modifier ton nom.
+            </p>
+          ) : account ? (
+            <Parametres
+              key={account._id}
+              token={token}
+              account={account}
+              onSave={setAccount}
+            />
+          ) : (
+            <p>Chargement du compte…</p>
+          )}
+        </main>
       )}
     </>
   );
