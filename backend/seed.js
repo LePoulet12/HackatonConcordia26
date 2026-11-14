@@ -27,11 +27,13 @@ const calendrier = new Intl.DateTimeFormat("en-CA", {
 
 function construireHoraire() {
   const lundi = new Date(`${calendrier.format(new Date())}T00:00:00Z`);
-  lundi.setUTCDate(lundi.getUTCDate() - (lundi.getUTCDay() + 6) % 7);
+  lundi.setUTCDate(lundi.getUTCDate() - ((lundi.getUTCDay() + 6) % 7));
   const mercredi = new Date(lundi);
   mercredi.setUTCDate(mercredi.getUTCDate() + 2);
   const heure = (jour, valeur) =>
-    new Date(parseHeureMontreal(`${jour.toISOString().slice(0, 10)}T${valeur}`));
+    new Date(
+      parseHeureMontreal(`${jour.toISOString().slice(0, 10)}T${valeur}`),
+    );
 
   return [
     {
@@ -90,54 +92,99 @@ async function insererSiAbsent(Modele, filtre, valeurs) {
 
 async function seed() {
   await connecterDB();
-  await Promise.all([Utilisateur, Etablissement, Publication, Commentaire].map((Modele) => Modele.init()));
+  await Promise.all(
+    [Utilisateur, Etablissement, Publication, Commentaire].map((Modele) =>
+      Modele.init(),
+    ),
+  );
 
   const date = new Date();
   const dates = { createdAt: date, updatedAt: date };
   const motDePasseHash = await bcrypt.hash(motDePasseDemo, 12);
-  await insererSiAbsent(Utilisateur, { _id: compteDemo._id }, {
-    ...compteDemo, ...dates, motDePasseHash, horaire: construireHoraire(),
-  });
-  await insererSiAbsent(Utilisateur, { _id: auteurDemo._id }, {
-    ...auteurDemo, ...dates, motDePasseHash,
-  });
+  await insererSiAbsent(
+    Utilisateur,
+    { _id: compteDemo._id },
+    {
+      ...compteDemo,
+      ...dates,
+      motDePasseHash,
+      horaire: construireHoraire(),
+    },
+  );
+  await insererSiAbsent(
+    Utilisateur,
+    { _id: auteurDemo._id },
+    {
+      ...auteurDemo,
+      ...dates,
+      motDePasseHash,
+    },
+  );
 
-  await insererSiAbsent(Etablissement, { nom: "Collège Montmorency" }, {
-    ...dates, nom: "Collège Montmorency", type: "cegep",
-  });
-  await insererSiAbsent(Etablissement, { nom: "Université Concordia" }, {
-    ...dates, nom: "Université Concordia", type: "universite",
-  });
+  await insererSiAbsent(
+    Etablissement,
+    { nom: "Collège Montmorency" },
+    {
+      ...dates,
+      nom: "Collège Montmorency",
+      type: "cegep",
+    },
+  );
+  await insererSiAbsent(
+    Etablissement,
+    { nom: "Université Concordia" },
+    {
+      ...dates,
+      nom: "Université Concordia",
+      type: "universite",
+    },
+  );
 
-  const college = await Etablissement.findOne({ nom: "Collège Montmorency" }).select("_id").lean();
+  const college = await Etablissement.findOne({ nom: "Collège Montmorency" })
+    .select("_id")
+    .lean();
   const publicationId = "ca0000000000000000000010";
-  await insererSiAbsent(Publication, { _id: publicationId }, {
-    ...dates,
-    titre: "Groupe d’étude en développement web",
-    contenu: "Je propose une séance de révision à la bibliothèque mercredi. Qui veut se joindre à moi ?",
-    auteur: auteurDemo._id,
-    etablissement: college._id,
-    domaine: "Informatique",
-    annee: 1,
-    etiquette: "Entraide",
-  });
-  await insererSiAbsent(Commentaire, { _id: "ca0000000000000000000020" }, {
-    ...dates,
-    auteur: compteDemo._id,
-    publication: publicationId,
-    contenu: "Je peux venir après mon cours de bases de données.",
-  });
+  await insererSiAbsent(
+    Publication,
+    { _id: publicationId },
+    {
+      ...dates,
+      titre: "Groupe d’étude en développement web",
+      contenu:
+        "Je propose une séance de révision à la bibliothèque mercredi. Qui veut se joindre à moi ?",
+      auteur: auteurDemo._id,
+      etablissement: college._id,
+      domaine: "Informatique",
+      annee: 1,
+      etiquette: "Entraide",
+    },
+  );
+  await insererSiAbsent(
+    Commentaire,
+    { _id: "ca0000000000000000000020" },
+    {
+      ...dates,
+      auteur: compteDemo._id,
+      publication: publicationId,
+      contenu: "Je peux venir après mon cours de bases de données.",
+    },
+  );
 
-  console.log(`Données de démo disponibles dans la base « ${mongoose.connection.name} ».`);
+  console.log(
+    `Données de démo disponibles dans la base « ${mongoose.connection.name} ».`,
+  );
   console.log(`Compte de démo : ${compteDemo.courriel} / ${motDePasseDemo}`);
 }
 
 try {
   await seed();
 } catch (erreur) {
-  console.error("Seeder interrompu :", erreur.code === 11000
-    ? "Un pseudo ou un courriel de démo est déjà utilisé par un autre document."
-    : erreur.message);
+  console.error(
+    "Seeder interrompu :",
+    erreur.code === 11000
+      ? "Un pseudo ou un courriel de démo est déjà utilisé par un autre document."
+      : erreur.message,
+  );
   process.exitCode = 1;
 } finally {
   await mongoose.disconnect();

@@ -87,7 +87,7 @@ function construireEntree(donnees) {
     }
 
     return { id, type, titre: destination, origine, destination, debut, fin,
-      arriveeVoulue, segments: trajet.itinerary };
+      arriveeVoulue, repetitionHebdomadaire: true, segments: trajet.itinerary };
   }
 
   throw erreurHttp("Type d’entrée invalide.", 400);

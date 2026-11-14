@@ -113,7 +113,7 @@ export function TripPlanner({ canSave, onSave }) {
           <TripDetails itinerary={route.itinerary} />
           <button type="button" className="horaire-button primary transport-save"
             disabled={!canSave || saving || saved} onClick={saveTrip}>
-            {saved ? "Trajet ajouté" : saving ? "Enregistrement…" : "Ajouter à mon horaire"}
+            {saved ? "Trajet ajouté" : saving ? "Enregistrement…" : "Ajouter chaque semaine"}
           </button>
           {!canSave && <small>Connecte-toi pour enregistrer ce trajet.</small>}
           <small className="transport-attribution"><a href="https://transitous.org/sources/" target="_blank" rel="noreferrer">Données Transitous</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a></small>

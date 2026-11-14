@@ -6,7 +6,7 @@ Lancer `npm install` puis `npm run dev` dans chacun des dossiers `backend` et `f
 
 Sur **Horaire et bus**, se connecter avec son compte ou en créer un. Le bouton **Ajouter un cours** enregistre une entrée datée sur le compte. Les cours et trajets sont rechargés avec le même compte via `GET /api/horaire`.
 
-Pour planifier un déplacement, entrer « Terminus Terrebonne », garder « Collège Montmorency, Laval » et choisir une date et une heure d’arrivée, par exemple lundi à 8 h. Après le calcul, **Ajouter à mon horaire** enregistre ce trajet une seule fois à la date choisie. Le calendrier affiche la plage prévue, marche incluse. Cliquer sur l’entrée ouvre les étapes enregistrées.
+Pour planifier un déplacement, entrer « Terminus Terrebonne », garder « Collège Montmorency, Laval » et choisir une date et une heure d’arrivée, par exemple lundi à 8 h. Après le calcul, **Ajouter chaque semaine** enregistre un trajet récurrent à partir de la date choisie. Ses heures et ses étapes sont celles du trajet calculé. Le calendrier affiche la plage prévue, marche incluse. Cliquer sur l’entrée ouvre les étapes enregistrées.
 
 Le calcul utilise [Transitous](https://transitous.org/api/) sans clé API ni compte de facturation. L’API publique accepte les essais légers de prototypes. Pour un usage régulier, suivre ses conditions pour les projets open source non commerciaux. L’heure saisie correspond au fuseau de Montréal. Le calcul tient compte des [réseaux couverts](https://transitous.org/sources/) et des mises à jour en temps réel disponibles à la recherche.
 

@@ -29,6 +29,7 @@ export const entreeHoraireSchema = new mongoose.Schema({
   origine: texte(250),
   destination: texte(250),
   arriveeVoulue: Date,
+  repetitionHebdomadaire: Boolean,
   segments: { type: [segmentSchema], default: undefined },
 }, { _id: false });
 

@@ -32,10 +32,19 @@ function eventsForDate(entries, date) {
   const events = entries.flatMap((entry) => {
     const start = dateMontreal(entry.debut);
     const end = dateMontreal(entry.fin);
-    if (date < start || date > end) return [];
-    const from = date === start ? minuteOfDay(entry.debut) : 0;
-    const to = date === end ? minuteOfDay(entry.fin) : 1440;
-    return to > from ? [{ entry, from, to }] : [];
+    const daysSinceStart = (Date.parse(date) - Date.parse(start)) / 86400000;
+    if (daysSinceStart < 0) return [];
+
+    // Compare calendar dates so the same local time survives a change of UTC offset.
+    const weeks = entry.type === "trajet" && entry.repetitionHebdomadaire
+      ? Math.floor(daysSinceStart / 7) : 0;
+    const sourceDate = shiftDate(date, -weeks * 7);
+    if (sourceDate > end) return [];
+
+    const from = sourceDate === start ? minuteOfDay(entry.debut) : 0;
+    const to = sourceDate === end ? minuteOfDay(entry.fin) : 1440;
+    const occurrenceDate = shiftDate(start, weeks * 7);
+    return to > from ? [{ entry, from, to, occurrenceDate }] : [];
   }).sort((a, b) => a.from - b.from || a.to - b.to);
   const columns = [];
   for (const event of events) {
@@ -122,9 +131,9 @@ export default function Horaire({ token, onConnect, onDisconnect }) {
         : dateMontreal(entry.debut);
       setMonday(mondayOf(date));
       setSelectedDate(date);
-      setSelectedEntry(entry);
+      setSelectedEntry({ ...entry, occurrenceDate: dateMontreal(entry.debut) });
       setError("");
-      setNotice(body.type === "trajet" ? "Trajet ajouté à ton horaire." : "Cours ajouté à ton horaire.");
+      setNotice(body.type === "trajet" ? "Trajet ajouté chaque semaine à ton horaire." : "Cours ajouté à ton horaire.");
     } catch (err) {
       if (err.status === 401) onDisconnect();
       throw err;
@@ -230,10 +239,10 @@ export default function Horaire({ token, onConnect, onDisconnect }) {
                     </div>
                     {displayed.map((date, index) => (
                       <div className="horaire-day-column" key={date}>
-                        {columns[index].events.map(({ entry, from, to, column }) => {
+                        {columns[index].events.map(({ entry, from, to, column, occurrenceDate }) => {
                           const width = 100 / columns[index].columns;
                           return <button type="button" key={entry.id} className={`horaire-event ${entry.type === "trajet" ? "trajet" : ""}`}
-                            onClick={() => setSelectedEntry(entry)} aria-label={`${entry.type === "trajet" ? "Trajet " : ""}${entry.titre}, ${heureMontreal.format(new Date(entry.debut))}`}
+                            onClick={() => setSelectedEntry({ ...entry, occurrenceDate })} aria-label={`${entry.type === "trajet" ? "Trajet " : ""}${entry.titre}, ${heureMontreal.format(new Date(entry.debut))}`}
                             style={{ top: `${(from - firstHour * 60) / total * 100}%`, height: `${(to - from) / total * 100}%`,
                               left: `calc(${column * width}% + 3px)`, width: `calc(${width}% - 6px)` }}>
                             <strong>{entry.type === "trajet" ? "Trajet · " : ""}{entry.titre}</strong>
@@ -251,7 +260,8 @@ export default function Horaire({ token, onConnect, onDisconnect }) {
             {selectedEntry && <section className="horaire-card">
               <h2>{selectedEntry.type === "trajet" ? "Trajet enregistré" : selectedEntry.titre}</h2>
               {selectedEntry.type === "trajet" && <p>{selectedEntry.origine} → {selectedEntry.destination}</p>}
-              <p>{dateMontreal(selectedEntry.debut)} · {heureMontreal.format(new Date(selectedEntry.debut))} – {heureMontreal.format(new Date(selectedEntry.fin))}</p>
+              <p>{selectedEntry.occurrenceDate} · {heureMontreal.format(new Date(selectedEntry.debut))} – {heureMontreal.format(new Date(selectedEntry.fin))}</p>
+              {selectedEntry.repetitionHebdomadaire && <p>Se répète chaque semaine. Heures enregistrées lors du calcul.</p>}
               {selectedEntry.type === "trajet"
                 ? <TripDetails itinerary={selectedEntry.segments} saved />
                 : selectedEntry.salle && <p>Salle {selectedEntry.salle}</p>}
